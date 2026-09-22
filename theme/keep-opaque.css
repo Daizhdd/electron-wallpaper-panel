@@ -1,7 +1,0 @@
-/* Content surfaces that must stay readable — document only, not auto-cleared. */
-/*
-  Keep opaque by default (do NOT put these into chromeSelectors):
-  - right / bottom / info preview panels
-  - message bubbles, cards, buttons, avatars
-  - menus, dialogs, settings, code blocks
-*/

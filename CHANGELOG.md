@@ -7,6 +7,9 @@
 - Fix English install clone URL (was a `<you>` placeholder)
 - `postinstall` prints the same next steps after `npm install`
   (uses `node bin/ewp.js`, not `npx ewp`)
+- Add double-click launcher scripts (`start-mimo-skinned.*`, `wait-ready.js`,
+  `repoint-mimo-shortcuts.ps1`) that wait for the renderer, apply the skin,
+  and verify it stuck — so a cold start keeps the wallpaper
 
 ## 0.2.0
 

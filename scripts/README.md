@@ -2,6 +2,20 @@
 
 Start a target Electron app with a loopback CDP port, then run `ewp`.
 
+## Double-click skinned launcher (Windows)
+
+`start-mimo-skinned.bat` → `start-mimo-skinned.ps1`:
+
+1. Starts the app with `--remote-debugging-port` (or reuses an instance that already has it)
+2. Waits for the real renderer document (`wait-ready.js`)
+3. Runs `ewp apply` with your profile/image
+4. Checks the skin stuck and re-applies once if needed
+
+Point your app shortcut at the `.bat` (see `repoint-mimo-shortcuts.ps1`).
+Runtime log: `scripts/launcher.log`. Edit the path defaults at the top of the `.ps1`.
+
+**Never** kill/restart the host app from *inside* one of its AI sessions.
+
 ## PowerShell
 
 ```powershell

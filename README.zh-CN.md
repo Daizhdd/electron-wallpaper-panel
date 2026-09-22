@@ -6,7 +6,17 @@
 
 完整英文文档见 [README.md](README.md)。
 
-## 安装后必做
+## 最简单：让 AI 帮你配置（推荐）
+
+不想手敲命令的话，把本仓库丢给任意会用终端的 AI（MiMo、Claude、Copilot 等）：
+
+1. 发仓库链接，或直接发 [docs/ai-setup.md](docs/ai-setup.md)  
+2. 说一句：**「读 ai-setup 教程，帮我配置双击启动自动换肤」**  
+3. AI 会问你 exe / 壁纸路径，然后写好 `launcher.config.json` 并重指快捷方式  
+
+克隆本身**不会**改你的快捷方式，必须主动配置一次。
+
+## 安装后必做（手动）
 
 克隆或 `npm install` **不会**自动给应用换肤。装完后按下面三步操作：
 
@@ -39,7 +49,10 @@
    ```powershell
    powershell -NoProfile -ExecutionPolicy Bypass -File scripts\repoint-mimo-shortcuts.ps1
    ```
-3. 以后用改过的快捷方式启动即可。细节见 [`scripts/README.md`](scripts/README.md)。
+3. 以后用改过的快捷方式启动即可。
+
+完整步骤、字段说明、排错：**[docs/ai-setup.md](docs/ai-setup.md)**（给人和 AI 共用）。  
+更多脚本说明：[`scripts/README.md`](scripts/README.md)。
 
 执行 `npm install` 时，终端也会打印上述步骤（`postinstall`）。
 

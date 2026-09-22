@@ -19,6 +19,7 @@
     "theme",
     "scripts",
     "docs/**/*.md",
+    "docs/ai-setup.md",
     "skin-panel.js",
     "README.md",
     "README.zh-CN.md",

@@ -11,6 +11,10 @@ Protocol (CDP).
 
 **中文说明:** [README.zh-CN.md](README.zh-CN.md)
 
+**Easiest setup — let an AI do it:** send this repo (or [docs/ai-setup.md](docs/ai-setup.md))
+to a coding assistant and say: *“Read the ai-setup guide and configure double-click
+skinned launch for me.”* Cloning alone does **not** change your shortcuts.
+
 > **Unofficial.** Not affiliated with, endorsed by, or sponsored by Xiaomi, Mimo,
 > WorkBuddy, or any other app vendor. Use at your own risk. Host updates may break
 > selectors — that is expected. See [docs/UNOFFICIAL.md](docs/UNOFFICIAL.md).
@@ -95,7 +99,10 @@ the app with CDP and applies the wallpaper:
    ```powershell
    powershell -NoProfile -ExecutionPolicy Bypass -File scripts\repoint-mimo-shortcuts.ps1
    ```
-3. Launch via the updated shortcut. Details: [`scripts/README.md`](scripts/README.md).
+3. Launch via the updated shortcut.
+
+Step-by-step guide (for humans **and** AI assistants):
+**[docs/ai-setup.md](docs/ai-setup.md)** · more: [`scripts/README.md`](scripts/README.md).
 
 After `apply`, a small **image** button appears at the bottom-right of the app window.
 

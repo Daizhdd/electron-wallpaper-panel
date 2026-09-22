@@ -46,6 +46,8 @@ Backups land in `scripts\backup-shortcuts\`. Report: `scripts\shortcut-report.tx
 
 Runtime log: `scripts/launcher.log`.
 
+Full checklist for humans and AI assistants: [`docs/ai-setup.md`](../docs/ai-setup.md).
+
 **Never** kill/restart the host app from *inside* one of its AI sessions.
 
 ## PowerShell one-shot

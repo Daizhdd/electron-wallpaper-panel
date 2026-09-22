@@ -14,6 +14,8 @@
   `launcher.config.example.json`) with auto-detect from profile `exeHints` /
   running process / existing shortcuts; cloning does not silently rewrite
   your shortcuts until you run `repoint-mimo-shortcuts.ps1`
+- Add `docs/ai-setup.md`: step-by-step guide so a coding assistant can
+  configure double-click skinned launch for the user; linked from both READMEs
 
 ## 0.2.0
 

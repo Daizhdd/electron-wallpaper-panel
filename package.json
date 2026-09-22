@@ -1,6 +1,6 @@
 {
   "name": "electron-wallpaper-panel",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Unofficial wallpaper / glass-skin toolkit for Electron desktop apps (CDP CSS injection + floating control panel). Not affiliated with any app vendor.",
   "license": "MIT",
   "type": "commonjs",
@@ -14,10 +14,11 @@
   "files": [
     "bin",
     "lib",
+    "locales",
     "profiles",
     "theme",
     "scripts",
-    "docs",
+    "docs/**/*.md",
     "skin-panel.js",
     "README.md",
     "README.zh-CN.md",

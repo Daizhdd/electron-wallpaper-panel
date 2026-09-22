@@ -6,14 +6,32 @@
 
 完整英文文档见 [README.md](README.md)。
 
+![electron-wallpaper-panel](docs/screenshots/window.png)
+
 ## 能做什么
 
 1. 用 `--remote-debugging-port` 启动目标应用  
-2. `ewp` 注入 CSS 与右下角 **「图」** 控制面板  
+2. `ewp` 注入 CSS 与右下角**图片图标**控制面板  
 3. 清掉侧栏/主区/输入框 chrome 底色，让壁纸透出来  
 4. 预览面板、卡片、菜单等**刻意保持不透明**
 
+面板文案支持**中英双语**，默认跟随宿主应用的语言（`navigator.language`），也可以用 `--lang zh-CN` 或 `EWP_LANG` 强制指定。
+
 不修改安装目录，纯运行时，可用 `ewp restore` 一键还原。
+
+## 截图
+
+浮动面板与启动按钮：
+
+![panel](docs/screenshots/panel.png)
+
+同一张壁纸下两个背景蒙版值的区别（纯运行时，不用重启）：
+
+![背景蒙版对比](docs/screenshots/veil-compare.jpg)
+
+上为原生外观，下为套上壁纸后：
+
+![前后对比](docs/screenshots/before-after.jpg)
 
 ## 快速开始
 

@@ -15,9 +15,7 @@ Protocol (CDP).
 > WorkBuddy, or any other app vendor. Use at your own risk. Host updates may break
 > selectors — that is expected. See [docs/UNOFFICIAL.md](docs/UNOFFICIAL.md).
 
-<!-- Screenshot pending: drop `docs/screenshots/panel.png` in, then uncomment.
-![panel](docs/screenshots/panel.png)
--->
+![electron-wallpaper-panel](docs/screenshots/window.png)
 
 ## Features
 
@@ -25,7 +23,24 @@ Protocol (CDP).
 - Floating panel: drop image, pick file, path field
 - Live **background veil** 0–100% and **input opacity** 0–100%
 - Multi-app **profiles** (`mimo-desktop`, `workbuddy`, `generic-electron`)
+- Panel UI in **English or Chinese**, auto-detected from the host app (`--lang` to force)
 - `probe` tool to find opaque ancestors after app updates
+
+## Screenshots
+
+The floating panel and its launcher button:
+
+![panel](docs/screenshots/panel.png)
+
+Same wallpaper, two background-veil settings (runtime only, nothing to restart):
+
+![background veil comparison](docs/screenshots/veil-compare.jpg)
+
+Native UI above, wallpaper skin below:
+
+![before and after](docs/screenshots/before-after.jpg)
+
+More about how these were captured: [docs/screenshots/README.md](docs/screenshots/README.md).
 
 ## How it works
 
@@ -63,7 +78,7 @@ node bin/ewp.js restore --profile profiles/mimo-desktop.json
 
 Or use the helper: [`scripts/launch-with-port.ps1`](scripts/README.md).
 
-After `apply`, a round **「图」** button appears at the bottom-right of the app window.
+After `apply`, a small **image** button appears at the bottom-right of the app window.
 
 | Control | Meaning |
 | --- | --- |
@@ -76,7 +91,7 @@ After `apply`, a round **「图」** button appears at the bottom-right of the a
 ## CLI
 
 ```text
-ewp apply   --profile <file> [--image <path>] [--port 9346] [--scrim 0-1]
+ewp apply   --profile <file> [--image <path>] [--port 9346] [--scrim 0-1] [--lang <code>]
 ewp restore [--port 9346]
 ewp status  [--port 9346]
 ewp probe   [--port 9346]
@@ -85,6 +100,8 @@ ewp probe   [--port 9346]
 - `--image` is embedded as a data URL (stays local).
 - Without `--image`, use the panel’s drop / file picker.
 - Scrim auto-guess is approximate; fine-tune with the slider.
+- `--lang en-US` / `--lang zh-CN` forces the panel language; without it the panel
+  follows the host app language (`navigator.language`). `EWP_LANG` works too.
 
 ## Profiles
 

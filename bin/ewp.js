@@ -3,7 +3,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { apply, restore, evalOnPage, testPort } = require('../lib/cdp');
+const { apply, restore, evalOnPage, testPort, loadLocales } = require('../lib/cdp');
 
 function fail(msg) {
   console.error('error:', msg);
@@ -43,6 +43,22 @@ function resolvePort(args, profile) {
   return Number.isFinite(n) ? n : 9346;
 }
 
+// Panel language: --lang / EWP_LANG wins, otherwise the panel follows the
+// host app's own language (navigator.language) and falls back to en-US.
+function resolveLang(args) {
+  const wanted = args.lang && args.lang !== true ? String(args.lang) : process.env.EWP_LANG || '';
+  if (!wanted) return undefined;
+  const available = Object.keys(loadLocales());
+  const pick =
+    available.find(k => k.toLowerCase() === wanted.toLowerCase()) ||
+    available.find(k => k.toLowerCase().split('-')[0] === wanted.split('-')[0].toLowerCase());
+  if (pick) return pick;
+  console.warn(
+    `warn: no locale matches "${wanted}"; available: ${available.join(', ') || '(none)'}. Using auto-detect.`
+  );
+  return undefined;
+}
+
 const PROBE_EXPR = `(() => {
   const cn = el => { const c = el && el.className; return (typeof c === 'string') ? c : (c && c.baseVal) || ''; };
   const vw = innerWidth, vh = innerHeight;
@@ -75,6 +91,10 @@ usage:
   ewp restore [--port 9346]
   ewp status  [--port 9346]
   ewp probe   [--port 9346]
+
+options:
+  --lang <code>   force the panel language (e.g. en-US, zh-CN). Default: follow
+                  the host app language. EWP_LANG does the same.
 `);
     return;
   }
@@ -107,8 +127,9 @@ usage:
     const image = args.image ? path.resolve(String(args.image)) : null;
     if (image && !fs.existsSync(image)) fail(`image not found: ${image}`);
     const scrim = args.scrim != null && args.scrim !== true ? Number(args.scrim) : undefined;
-    const result = await apply(port, profile, { imagePath: image, scrim });
-    console.log('applied:', result);
+    const lang = resolveLang(args);
+    const result = await apply(port, profile, { imagePath: image, scrim, lang });
+    console.log(`applied: ${result} (lang: ${lang || 'auto'})`);
     return;
   }
 

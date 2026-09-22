@@ -1,11 +1,85 @@
 /* Floating wallpaper control panel — self-contained, no network. */
 (() => {
-  if (window.__ewpPanelBoot) return;
-  window.__ewpPanelBoot = true;
-
   const PANEL_ID = 'ewp-panel';
   const FAB_ID = 'ewp-fab';
   const STYLE_ID = 'ewp-panel-style';
+
+  // ---- i18n ---------------------------------------------------------------
+  // `locales/*.json` are injected as window.__EWP_I18N.locales; FALLBACK keeps
+  // the panel readable even if the payload was stripped. Resolution order:
+  // explicit --lang / EWP_LANG  ->  navigator.language  ->  en-US.
+  const FALLBACK = {
+    'panel.title': 'Wallpaper',
+    'panel.close': 'Close',
+    'drop.title': 'Drop an image, or click to choose',
+    'drop.strong': 'Drop image',
+    'drop.weak': 'or click to pick',
+    'path.placeholder': 'Image full path',
+    'path.button': 'Path',
+    veil: 'Background veil',
+    opacity: 'Input opacity',
+    apply: 'Apply',
+    reset: 'Reset',
+    'hint.line1': 'Veil 0 = raw image. Input opacity 0 = transparent chrome.',
+    'hint.line2': 'Unofficial runtime skin. Restart the app with the debug port after updates.',
+    'fab.title': 'Wallpaper panel',
+    'fab.label': 'Wallpaper panel',
+    'msg.dropped': 'Applied dropped image',
+    'msg.dropFailed': 'Drop failed: %s',
+    'msg.picked': 'Applied selected file',
+    'msg.pickFailed': 'Pick failed: %s',
+    'msg.enterPath': 'Enter a path',
+    'msg.triedPath': 'Tried the path. Prefer drop or pick if nothing shows.',
+    'msg.applied': 'Applied slider values',
+    'msg.reset': 'Reset (style removed)',
+    'err.readFailed': 'read failed',
+    'err.decodeFailed': 'image decode failed'
+  };
+
+  const injected = (window.__EWP_I18N && window.__EWP_I18N.locales) || {};
+  const catalog = Object.assign({}, injected);
+  catalog['en-US'] = Object.assign({}, FALLBACK, catalog['en-US'] || {});
+
+  function pickLocale() {
+    const forced = window.__EWP_I18N && window.__EWP_I18N.forced;
+    if (forced && catalog[forced]) return forced;
+    const want = String(navigator.language || 'en').toLowerCase();
+    const keys = Object.keys(catalog);
+    return (
+      keys.find(k => k.toLowerCase() === want) ||
+      keys.find(k => k.toLowerCase().split('-')[0] === want.split('-')[0]) ||
+      'en-US'
+    );
+  }
+
+  const LOCALE = pickLocale();
+  const L = Object.assign({}, FALLBACK, catalog[LOCALE] || {});
+  const t = k => (L[k] == null ? k : L[k]);
+  const tMsg = (k, v) => t(k).replace('%s', v);
+  const esc = s =>
+    String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+
+  const FAB_ICON =
+    '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" ' +
+    'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>' +
+    '<path d="M21 15l-5-5L5 21"/></svg>';
+
+  // Re-mount when the resolved locale changes, so `--lang` works on a live app.
+  if (window.__ewpPanelBoot && window.__ewpPanelLocale === LOCALE) return;
+  if (window.__ewpPanelBoot) {
+    [PANEL_ID, FAB_ID, STYLE_ID].forEach(id => {
+      const n = document.getElementById(id);
+      if (n) n.remove();
+    });
+    window.__ewpPanelBoot = false;
+  }
+  window.__ewpPanelBoot = true;
+  window.__ewpPanelLocale = LOCALE;
 
   function ensureCss() {
     if (document.getElementById(STYLE_ID)) return;
@@ -84,7 +158,7 @@
   function fileToDataUrl(file, maxW) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onerror = () => reject(new Error('read failed'));
+      reader.onerror = () => reject(new Error(t('err.readFailed')));
       reader.onload = () => {
         const img = new Image();
         img.onload = () => {
@@ -98,7 +172,7 @@
           ctx.drawImage(img, 0, 0, w, h);
           resolve(canvas.toDataURL('image/jpeg', 0.88));
         };
-        img.onerror = () => reject(new Error('image decode failed'));
+        img.onerror = () => reject(new Error(t('err.decodeFailed')));
         img.src = String(reader.result);
       };
       reader.readAsDataURL(file);
@@ -165,8 +239,9 @@
       fab = document.createElement('button');
       fab.id = FAB_ID;
       fab.type = 'button';
-      fab.title = 'Wallpaper panel';
-      fab.textContent = '图';
+      fab.title = t('fab.title');
+      fab.setAttribute('aria-label', t('fab.label'));
+      fab.innerHTML = FAB_ICON;
       document.documentElement.appendChild(fab);
     }
 
@@ -176,20 +251,21 @@
       panel.id = PANEL_ID;
       panel.hidden = true;
       panel.innerHTML =
-        '<div class="sp-title"><span>Wallpaper</span><button class="sp-x" type="button">✕</button></div>' +
-        '<div class="sp-drop" id="ewp-drop"><div><b>Drop image</b><br/>or click to pick</div></div>' +
+        '<div class="sp-title"><span>' + esc(t('panel.title')) + '</span>' +
+        '<button class="sp-x" type="button" aria-label="' + esc(t('panel.close')) + '">✕</button></div>' +
+        '<div class="sp-drop" id="ewp-drop" title="' + esc(t('drop.title')) + '">' +
+        '<div><b>' + esc(t('drop.strong')) + '</b><br/>' + esc(t('drop.weak')) + '</div></div>' +
         '<input type="file" id="ewp-file" accept="image/*" hidden />' +
-        '<div class="sp-row"><input type="text" id="ewp-path" placeholder="Image full path" />' +
-        '<button class="sp-btn" type="button" id="ewp-path-btn">Path</button></div>' +
-        '<div class="sp-label"><span>Background veil</span><span id="ewp-scrim-v">40%</span></div>' +
+        '<div class="sp-row"><input type="text" id="ewp-path" placeholder="' + esc(t('path.placeholder')) + '" />' +
+        '<button class="sp-btn" type="button" id="ewp-path-btn">' + esc(t('path.button')) + '</button></div>' +
+        '<div class="sp-label"><span>' + esc(t('veil')) + '</span><span id="ewp-scrim-v">40%</span></div>' +
         '<input type="range" id="ewp-scrim" min="0" max="100" value="40" />' +
-        '<div class="sp-label"><span>Input opacity</span><span id="ewp-comp-v">0%</span></div>' +
+        '<div class="sp-label"><span>' + esc(t('opacity')) + '</span><span id="ewp-comp-v">0%</span></div>' +
         '<input type="range" id="ewp-comp" min="0" max="100" value="0" />' +
-        '<div class="sp-actions"><button class="sp-btn primary" type="button" id="ewp-apply">Apply</button>' +
-        '<button class="sp-btn" type="button" id="ewp-reset">Reset</button></div>' +
+        '<div class="sp-actions"><button class="sp-btn primary" type="button" id="ewp-apply">' + esc(t('apply')) + '</button>' +
+        '<button class="sp-btn" type="button" id="ewp-reset">' + esc(t('reset')) + '</button></div>' +
         '<div class="sp-msg" id="ewp-msg"></div>' +
-        '<div class="sp-hint">Veil 0 = raw image. Input opacity 0 = transparent chrome.<br/>' +
-        'Unofficial runtime skin. Restart the app with debug port after updates.</div>';
+        '<div class="sp-hint">' + esc(t('hint.line1')) + '<br/>' + esc(t('hint.line2')) + '</div>';
       document.documentElement.appendChild(panel);
     }
 
@@ -222,9 +298,9 @@
       if (!f) return;
       try {
         await loadFile(f);
-        msg('Applied dropped image');
+        msg(t('msg.dropped'));
       } catch (err) {
-        msg('Drop failed: ' + err.message, false);
+        msg(tMsg('msg.dropFailed', err.message), false);
       }
     };
     file.onchange = async () => {
@@ -232,9 +308,9 @@
       if (!f) return;
       try {
         await loadFile(f);
-        msg('Applied selected file');
+        msg(t('msg.picked'));
       } catch (err) {
-        msg('Pick failed: ' + err.message, false);
+        msg(tMsg('msg.pickFailed', err.message), false);
       }
       file.value = '';
     };
@@ -242,7 +318,7 @@
     panel.querySelector('#ewp-path-btn').onclick = () => {
       const p = (panel.querySelector('#ewp-path').value || '').trim().replace(/^["']|["']$/g, '');
       if (!p) {
-        msg('Enter a path', false);
+        msg(t('msg.enterPath'), false);
         return;
       }
       let uri = p;
@@ -251,7 +327,7 @@
         uri = 'file:///' + norm.replace(/^\//, '');
       }
       setWallpaperUri(uri);
-      msg('Tried path. Prefer drop/pick if nothing shows.');
+      msg(t('msg.triedPath'));
     };
 
     panel.querySelector('#ewp-scrim').oninput = e => {
@@ -268,7 +344,7 @@
     panel.querySelector('#ewp-apply').onclick = () => {
       applyScrim(panel.querySelector('#ewp-scrim').value);
       applyComposer(panel.querySelector('#ewp-comp').value);
-      msg('Applied slider values');
+      msg(t('msg.applied'));
     };
 
     panel.querySelector('#ewp-reset').onclick = () => {
@@ -285,7 +361,7 @@
       document.documentElement.removeAttribute('data-ewp-skin');
       const st = document.getElementById('ewp-wallpaper-skin');
       if (st) st.remove();
-      msg('Reset (style removed)');
+      msg(t('msg.reset'));
     };
   }
 

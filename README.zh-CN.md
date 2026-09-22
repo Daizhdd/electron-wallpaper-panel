@@ -6,6 +6,28 @@
 
 完整英文文档见 [README.md](README.md)。
 
+## 安装后必做
+
+克隆或 `npm install` **不会**自动给应用换肤。装完后按下面三步操作：
+
+1. **带调试口启动目标应用**（仅本机回环；用完建议关掉）：
+   ```bash
+   "/path/to/App.exe" --remote-debugging-port=9346
+   ```
+2. **套上壁纸**（纯运行时，不改安装文件）：
+   ```bash
+   node bin/ewp.js apply --profile profiles/mimo-desktop.json --image ./wallpaper.jpg
+   ```
+   没有 `--image` 时，可用应用右下角浮动面板拖图/选文件。
+3. **还原原生外观**：
+   ```bash
+   node bin/ewp.js restore
+   ```
+
+可选：`npm link` 后可直接用 `ewp`；PowerShell 一键启动见 [`scripts/launch-with-port.ps1`](scripts/README.md)。
+
+执行 `npm install` 时，终端也会打印上述步骤（`postinstall`）。
+
 ![electron-wallpaper-panel](docs/screenshots/window.png)
 
 ## 能做什么

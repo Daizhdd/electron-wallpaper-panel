@@ -61,7 +61,10 @@ git clone https://github.com/<you>/electron-wallpaper-panel.git
 cd electron-wallpaper-panel
 node -e "console.log('ready')"
 # optional: npm link   # exposes `ewp`
+# optional: npm install   # runs postinstall and prints the next steps
 ```
+
+**After install — nothing is automatic.** Cloning (or `npm install`) does not skin any app. You still need the three Quick start steps below: start with a debug port → `ewp apply` → `ewp restore` when done.
 
 ## Quick start
 

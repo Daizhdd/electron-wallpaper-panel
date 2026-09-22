@@ -28,8 +28,9 @@
     "CONTRIBUTING.md"
   ],
   "scripts": {
-    "check": "node --check lib/cdp.js && node --check bin/ewp.js && node --check skin-panel.js",
-    "help": "node bin/ewp.js help"
+    "check": "node --check lib/cdp.js && node --check bin/ewp.js && node --check skin-panel.js && node --check scripts/postinstall.js",
+    "help": "node bin/ewp.js help",
+    "postinstall": "node scripts/postinstall.js"
   },
   "keywords": [
     "electron",

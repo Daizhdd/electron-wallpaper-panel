@@ -57,7 +57,7 @@ More about how these were captured: [docs/screenshots/README.md](docs/screenshot
 ## Install
 
 ```bash
-git clone https://github.com/<you>/electron-wallpaper-panel.git
+git clone https://github.com/Daizhdd/electron-wallpaper-panel.git
 cd electron-wallpaper-panel
 node -e "console.log('ready')"
 # optional: npm link   # exposes `ewp`

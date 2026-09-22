@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.1
+
+- README (en/zh): add explicit post-install steps — clone/install does not auto-skin;
+  start with `--remote-debugging-port`, then `apply` / `restore`
+- Fix English install clone URL (was a `<you>` placeholder)
+- `postinstall` prints the same next steps after `npm install`
+  (uses `node bin/ewp.js`, not `npx ewp`)
+
 ## 0.2.0
 
 - Panel UI is now localised (`locales/en-US.json`, `locales/zh-CN.json`) and follows

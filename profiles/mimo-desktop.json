@@ -1,0 +1,45 @@
+{
+  "id": "mimo-desktop",
+  "displayName": "Xiaomi MiMo Desktop (unofficial)",
+  "processName": "Xiaomi MiMo",
+  "exeHints": [
+    "D:/mimo/Xiaomi MiMo/Xiaomi MiMo.exe",
+    "%LOCALAPPDATA%/Programs/Xiaomi MiMo/Xiaomi MiMo.exe",
+    "C:/Program Files/Xiaomi MiMo/Xiaomi MiMo.exe"
+  ],
+  "defaultPort": 9346,
+  "rootSelectors": ["html", "body", "#root", "#app"],
+  "chromeSelectors": [
+    "#app > main",
+    "main.main-white-context",
+    ".sidebar-content-shell",
+    "[data-sidebar-content]",
+    "[data-sidebar-brand]",
+    "[data-brand-actions-clip]",
+    ".spine-rail",
+    ".spine-fade.top",
+    ".spine-fade.bot",
+    "#home-view",
+    ".home-layout",
+    ".home-layout-content",
+    ".side-chat",
+    ".chat-header",
+    ".feature-page-shell",
+    ".composer-tray",
+    ".composer-wrap",
+    ".composer-home",
+    ".sec-h",
+    ".bg-side-glass",
+    ".bg-main-bg"
+  ],
+  "keepOpaque": [
+    ".info-panel",
+    ".right-panel",
+    ".bottom-panel",
+    ".rp-frame",
+    ".bp-body",
+    ".menu",
+    ".cb"
+  ],
+  "selectionRestore": "[data-sidebar-content] :is([aria-current='page'], .conv-item.active, .sidenav-item.active)"
+}

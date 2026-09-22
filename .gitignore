@@ -1,0 +1,9 @@
+node_modules/
+.DS_Store
+Thumbs.db
+*.log
+.env
+dist/
+.tmp/
+wallpaper.local.jpg
+wallpaper.local.png

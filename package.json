@@ -1,0 +1,30 @@
+{
+  "name": "electron-wallpaper-panel",
+  "version": "0.1.0",
+  "description": "Unofficial wallpaper / glass-skin toolkit for Electron desktop apps (CDP CSS injection + floating control panel). Not affiliated with any app vendor.",
+  "license": "MIT",
+  "type": "commonjs",
+  "bin": {
+    "ewp": "bin/ewp.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "bin",
+    "lib",
+    "profiles",
+    "theme",
+    "docs",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "electron",
+    "wallpaper",
+    "cdp",
+    "custom-css",
+    "desktop",
+    "unofficial"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "id": "workbuddy",
+  "displayName": "WorkBuddy (unofficial)",
+  "processName": "WorkBuddy",
+  "exeHints": [
+    "%LOCALAPPDATA%/Programs/WorkBuddy/WorkBuddy.exe",
+    "C:/Program Files/WorkBuddy/WorkBuddy.exe"
+  ],
+  "defaultPort": 9336,
+  "rootSelectors": ["html", "body", "#root", ".teams-container"],
+  "chromeSelectors": [
+    ".teams-grid-scroll-content",
+    "[class*='gridView']",
+    "[class*='_grid_']",
+    ".conversation-shell",
+    ".conversation-sidebar",
+    ".wb-home-route",
+    "#workbuddy-menubar-container",
+    ".workbuddy-window-controls",
+    ".cr-input-container",
+    ".cr-input-box__main",
+    ".collapsible-section-header",
+    ".conversation-section-label"
+  ],
+  "keepOpaque": [
+    ".detail-panel",
+    ".detail-main",
+    ".sidebar-next",
+    ".cr-tool-exp__content",
+    ".cr-code-like-box"
+  ],
+  "selectionRestore": ".conversation-sidebar :is([aria-selected='true'], [class*='_selected_'])"
+}

@@ -3,9 +3,9 @@
   "displayName": "Xiaomi MiMo Desktop (unofficial)",
   "processName": "Xiaomi MiMo",
   "exeHints": [
-    "D:/mimo/Xiaomi MiMo/Xiaomi MiMo.exe",
     "%LOCALAPPDATA%/Programs/Xiaomi MiMo/Xiaomi MiMo.exe",
-    "C:/Program Files/Xiaomi MiMo/Xiaomi MiMo.exe"
+    "%ProgramFiles%/Xiaomi MiMo/Xiaomi MiMo.exe",
+    "%ProgramFiles(x86)%/Xiaomi MiMo/Xiaomi MiMo.exe"
   ],
   "defaultPort": 9346,
   "rootSelectors": ["html", "body", "#root", "#app"],

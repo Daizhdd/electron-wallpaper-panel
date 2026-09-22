@@ -72,7 +72,7 @@ async function main() {
 
 usage:
   ewp apply   --profile profiles/mimo-desktop.json [--image file.jpg] [--port 9346] [--scrim 0-1]
-  ewp restore --profile profiles/mimo-desktop.json [--port 9346]
+  ewp restore [--port 9346]
   ewp status  [--port 9346]
   ewp probe   [--port 9346]
 `);

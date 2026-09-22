@@ -1,28 +1,52 @@
 # electron-wallpaper-panel
 
-Unofficial **wallpaper / glass-skin** toolkit for Electron desktop assistants.
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Node](https://img.shields.io/badge/node-%3E%3D18-brightgreen.svg)](https://nodejs.org)
 
-You get a floating control panel (drag & drop image, file picker, path field,
-live sliders for veil/opacity) plus a small CLI to inject and restore styles
-over Chrome DevTools Protocol (CDP).
+Unofficial **wallpaper / glass-skin** toolkit for Electron desktop apps.
 
-> **Unofficial.** This project is **not affiliated with, endorsed by, or sponsored by**
-> Xiaomi, Mimo, WorkBuddy, or any other app vendor. Use at your own risk.
-> App updates may break selectors — that is expected.
+Floating control panel (drag & drop, file picker, path, live veil / input-opacity
+sliders) + a small CLI that injects and restores styles over the Chrome DevTools
+Protocol (CDP).
+
+**中文说明:** [README.zh-CN.md](README.zh-CN.md)
+
+> **Unofficial.** Not affiliated with, endorsed by, or sponsored by Xiaomi, Mimo,
+> WorkBuddy, or any other app vendor. Use at your own risk. Host updates may break
+> selectors — that is expected. See [docs/UNOFFICIAL.md](docs/UNOFFICIAL.md).
+
+<!-- Screenshot pending: drop `docs/screenshots/panel.png` in, then uncomment.
+![panel](docs/screenshots/panel.png)
+-->
+
+## Features
+
+- One-click apply / restore (runtime only — **no** app file patching)
+- Floating panel: drop image, pick file, path field
+- Live **background veil** 0–100% and **input opacity** 0–100%
+- Multi-app **profiles** (`mimo-desktop`, `workbuddy`, `generic-electron`)
+- `probe` tool to find opaque ancestors after app updates
 
 ## How it works
 
-1. Start the target Electron app with `--remote-debugging-port=9346`.
-2. `ewp` injects CSS + a floating panel into the renderer.
-3. Chrome surfaces (sidebar / main / composer chrome) are cleared so the image shows.
+1. Start the target Electron app with `--remote-debugging-port=9346` (loopback).
+2. `ewp` injects CSS + the floating panel into the renderer.
+3. Chrome surfaces (sidebar / main / composer frame) are cleared so the image shows.
 4. Content surfaces (preview panels, cards, menus) stay opaque on purpose.
-
-No app files are patched. Everything is runtime-only and reversible (`ewp restore`).
 
 ## Requirements
 
-- Node.js 18+ (uses built-in `WebSocket` / `fetch`)
+- Node.js **18+** (built-in `WebSocket`)
 - A Chromium/Electron app that accepts `--remote-debugging-port`
+
+## Install
+
+```bash
+git clone https://github.com/<you>/electron-wallpaper-panel.git
+cd electron-wallpaper-panel
+node -e "console.log('ready')"
+# optional: npm link   # exposes `ewp`
+```
 
 ## Quick start
 
@@ -37,57 +61,55 @@ node bin/ewp.js apply --profile profiles/mimo-desktop.json --image ./wallpaper.j
 node bin/ewp.js restore --profile profiles/mimo-desktop.json
 ```
 
-After `apply`, a **「图」/ picture** button appears at the bottom-right of the app
-window. Click it for drag-and-drop, file pick, path apply, and live sliders:
+Or use the helper: [`scripts/launch-with-port.ps1`](scripts/README.md).
 
-- **Background veil** 0–100%
-- **Composer / input opacity** 0–100%
+After `apply`, a round **「图」** button appears at the bottom-right of the app window.
 
-## Profiles
-
-Profiles live in [`profiles/`](profiles/) and describe app-specific CSS and
-process names. Built-in:
-
-| File | Target |
+| Control | Meaning |
 | --- | --- |
-| `profiles/mimo-desktop.json` | Xiaomi MiMo Desktop (unofficial) |
-| `profiles/workbuddy.json` | WorkBuddy (unofficial) |
-| `profiles/generic-electron.json` | Best-effort generic Electron |
-
-Copy a profile and adjust `chromeSelectors` / `keepOpaque` after app updates
-using the probe scripts (`node bin/ewp.js probe`).
+| Drop / pick | Instant preview; veil auto-suggest from mean luminance |
+| Path | Best-effort `file://` URL |
+| Background veil | 0 = raw image, 100 = heavy light/dark veil |
+| Input opacity | 0 = transparent composer chrome, 100 = opaque |
+| Apply / Reset | Pin slider values / remove the skin |
 
 ## CLI
 
 ```text
 ewp apply   --profile <file> [--image <path>] [--port 9346] [--scrim 0-1]
-ewp restore --profile <file> [--port 9346]
+ewp restore [--port 9346]
 ewp status  [--port 9346]
-ewp probe   [--port 9346] [--mode stack|opaque|theme]
+ewp probe   [--port 9346]
 ```
 
-- `--image` is embedded as a data URL (no network).
-- Without `--image`, the panel’s drag-and-drop / file picker is the primary path.
-- Scrim auto-guess is approximate (mean luminance); fine-tune with the slider.
+- `--image` is embedded as a data URL (stays local).
+- Without `--image`, use the panel’s drop / file picker.
+- Scrim auto-guess is approximate; fine-tune with the slider.
 
-## Safety notes
+## Profiles
 
-- **Never** run the restart helpers from *inside* a session of the app you are about
-  to kill — that kills your own session. Restart the app yourself.
-- Debug port should stay on **loopback** only.
-- Do not point this at apps you do not own or administer on shared machines without permission.
+See [docs/profile-schema.md](docs/profile-schema.md) and [docs/troubleshooting.md](docs/troubleshooting.md).
+
+| File | Target (compatibility label only) |
+| --- | --- |
+| `profiles/mimo-desktop.json` | Xiaomi MiMo Desktop |
+| `profiles/workbuddy.json` | WorkBuddy |
+| `profiles/generic-electron.json` | Generic Electron (best effort) |
+
+Version notes: [docs/calibration.md](docs/calibration.md)
+
+## Security
+
+Debug ports are powerful. Loopback only. Details: [SECURITY.md](SECURITY.md).
 
 ## Why not a native plugin?
 
-Most of these desktop apps do not expose a UI-extension API. Runtime CSS + a small
-injected panel is the practical unofficial route. It is intentionally layout-safe:
-no product recoloring, no fake “official theme store”.
+Most host apps do not ship a UI-extension API. Runtime CSS + a tiny injected panel
+is the practical unofficial route. No fake “official theme store”, no bundle patching.
 
-## Disclaimer (please read)
+## Changelog
 
-- Trademarks belong to their owners. Naming compatibility does not imply endorsement.
-- This tool can break after host app upgrades. Check issues / re-probe selectors.
-- Provided **AS IS**, without warranty of any kind.
+[CHANGELOG.md](CHANGELOG.md) · [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## License
 

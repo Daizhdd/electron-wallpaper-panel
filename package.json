@@ -4,6 +4,7 @@
   "description": "Unofficial wallpaper / glass-skin toolkit for Electron desktop apps (CDP CSS injection + floating control panel). Not affiliated with any app vendor.",
   "license": "MIT",
   "type": "commonjs",
+  "main": "lib/cdp.js",
   "bin": {
     "ewp": "bin/ewp.js"
   },
@@ -15,16 +16,27 @@
     "lib",
     "profiles",
     "theme",
+    "scripts",
     "docs",
+    "skin-panel.js",
     "README.md",
-    "LICENSE"
+    "README.zh-CN.md",
+    "LICENSE",
+    "SECURITY.md",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md"
   ],
+  "scripts": {
+    "check": "node --check lib/cdp.js && node --check bin/ewp.js && node --check skin-panel.js",
+    "help": "node bin/ewp.js help"
+  },
   "keywords": [
     "electron",
     "wallpaper",
     "cdp",
     "custom-css",
     "desktop",
-    "unofficial"
+    "unofficial",
+    "skin"
   ]
 }

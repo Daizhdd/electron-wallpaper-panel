@@ -10,6 +10,10 @@
 - Add double-click launcher scripts (`start-mimo-skinned.*`, `wait-ready.js`,
   `repoint-mimo-shortcuts.ps1`) that wait for the renderer, apply the skin,
   and verify it stuck — so a cold start keeps the wallpaper
+- Launcher paths are config-driven (`scripts/launcher.config.json` ←
+  `launcher.config.example.json`) with auto-detect from profile `exeHints` /
+  running process / existing shortcuts; cloning does not silently rewrite
+  your shortcuts until you run `repoint-mimo-shortcuts.ps1`
 
 ## 0.2.0
 

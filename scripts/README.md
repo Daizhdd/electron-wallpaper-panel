@@ -4,6 +4,39 @@ Start a target Electron app with a loopback CDP port, then run `ewp`.
 
 ## Double-click skinned launcher (Windows)
 
+Cloning the repo does **not** change your shortcuts by itself. To get a
+double-click flow that starts the app *and* applies the wallpaper:
+
+### 1. Configure (once)
+
+```powershell
+Copy-Item scripts\launcher.config.example.json scripts\launcher.config.json
+notepad scripts\launcher.config.json
+```
+
+| Field | Meaning |
+|-------|---------|
+| `appPath` | Full path to the app `.exe`. Leave `""` to auto-detect from profile `exeHints`, a running process, or an existing shortcut |
+| `processName` | Process name used to detect/restart the app (from the profile) |
+| `shortcutNames` | Desktop / Start Menu `.lnk` base names to repoint (without `.lnk`) |
+| `port` | CDP port (default `9346`) |
+| `profile` | Profile path relative to repo root |
+| `image` | Wallpaper path (`""` = pick later in the floating panel) |
+| `lang` | Panel language, e.g. `zh-CN` / `en-US` |
+
+`launcher.config.json` is machine-local and gitignored. The example file is what
+gets committed.
+
+### 2. Repoint shortcuts (once)
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\repoint-mimo-shortcuts.ps1
+```
+
+Backups land in `scripts\backup-shortcuts\`. Report: `scripts\shortcut-report.txt`.
+
+### 3. What the launcher does
+
 `start-mimo-skinned.bat` → `start-mimo-skinned.ps1`:
 
 1. Starts the app with `--remote-debugging-port` (or reuses an instance that already has it)
@@ -11,12 +44,11 @@ Start a target Electron app with a loopback CDP port, then run `ewp`.
 3. Runs `ewp apply` with your profile/image
 4. Checks the skin stuck and re-applies once if needed
 
-Point your app shortcut at the `.bat` (see `repoint-mimo-shortcuts.ps1`).
-Runtime log: `scripts/launcher.log`. Edit the path defaults at the top of the `.ps1`.
+Runtime log: `scripts/launcher.log`.
 
 **Never** kill/restart the host app from *inside* one of its AI sessions.
 
-## PowerShell
+## PowerShell one-shot
 
 ```powershell
 # scripts/launch-with-port.ps1
@@ -44,7 +76,6 @@ node @args2
 
 ```bash
 #!/usr/bin/env bash
-# scripts/launch-with-port.sh
 set -euo pipefail
 APP_PATH="${1:?app path}"
 PORT="${2:-9346}"

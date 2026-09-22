@@ -1,22 +1,38 @@
-﻿# Double-click launcher: start MiMo with CDP port, then apply wallpaper skin.
-# Paths are machine-specific; edit here if the install moves.
+﻿# Double-click launcher: start the target Electron app with CDP, then apply wallpaper.
+# Configure via scripts/launcher.config.json (copy launcher.config.example.json).
 param(
-  [string]$AppPath = 'D:\mimo\Xiaomi MiMo\Xiaomi MiMo.exe',
-  [int]$Port = 9346,
-  [string]$Profile = 'profiles/mimo-desktop.json',
-  [string]$Image = 'C:\Users\神\Desktop\wallpaper动态壁纸_1_小羊（主页娶图）_来自小红书网页版.jpg',
-  [string]$Lang = 'zh-CN',
+  [string]$AppPath,
+  [int]$Port,
+  [string]$Profile,
+  [string]$Image,
+  [string]$Lang,
+  [string]$ProcessName,
   [switch]$Restore
 )
 $ErrorActionPreference = 'Continue'
-$root = Split-Path -Parent $PSScriptRoot
+. (Join-Path $PSScriptRoot 'launcher-common.ps1')
+
+$cfg = Get-LauncherConfig
+if (-not $AppPath) { $AppPath = '' }
+if (-not $Port) { $Port = [int]$cfg.port }
+if (-not $Port) { $Port = 9346 }
+if (-not $Profile) { $Profile = [string]$cfg.profile }
+if (-not $Profile) { $Profile = 'profiles/generic-electron.json' }
+if (-not $PSBoundParameters.ContainsKey('Image')) { $Image = [string]$cfg.image }
+if (-not $Lang) { $Lang = [string]$cfg.lang }
+if (-not $ProcessName) { $ProcessName = [string]$cfg.processName }
+if (-not $ProcessName) { $ProcessName = 'Xiaomi MiMo' }
+
+$root = $script:RepoRoot
 $ewp = Join-Path $root 'bin\ewp.js'
 $log = Join-Path $PSScriptRoot 'launcher.log'
 $waitReadyPath = Join-Path $PSScriptRoot 'wait-ready.js'
+$profilePath = Resolve-RepoPath $Profile
+$imagePath = if ($Image) { Expand-EnvPath $Image } else { '' }
 
 function Write-Log([string]$Message) {
   $line = '[{0}] {1}' -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'), $Message
-  Add-Content -LiteralPath $log -Value $line -Encoding UTF8
+  try { Add-Content -LiteralPath $log -Value $line -Encoding UTF8 } catch { }
   Write-Host $line
 }
 
@@ -62,28 +78,30 @@ evalOnPage(Number(process.argv[2]), '(()=>({skin:document.documentElement.getAtt
   .catch(() => process.exit(1));
 '@
   $tmp = Join-Path $PSScriptRoot 'skin-check.js'
-  [IO.File]::WriteAllText($tmp, $src, [Text.UTF8Encoding]::new($true))
+  try { [IO.File]::WriteAllText($tmp, $src, [Text.UTF8Encoding]::new($true)) } catch { return $false }
   $null = & node $tmp $P 2>&1 | Out-String
   return ($LASTEXITCODE -eq 0)
 }
 
-Write-Log "start port=$Port restore=$Restore imageExists=$(Test-Path -LiteralPath $Image)"
-$mimo = Get-Process -Name 'Xiaomi MiMo' -ErrorAction SilentlyContinue
+$resolvedApp = Find-AppPath -Configured $AppPath -ProfilePath $profilePath -ProcessName $ProcessName
+Write-Log "start port=$Port profile=$profilePath process=$ProcessName app=$resolvedApp image=$imagePath restore=$Restore"
 
-if ($mimo -and -not (Test-CdpPort $Port)) {
+$running = if ($ProcessName) { Get-Process -Name $ProcessName -ErrorAction SilentlyContinue } else { $null }
+
+if ($running -and -not (Test-CdpPort $Port)) {
   Write-Log 'app running without CDP; restarting with debug port'
-  $mimo | Stop-Process -Force
+  $running | Stop-Process -Force
   Start-Sleep -Seconds 2
-  $mimo = $null
+  $running = $null
 }
 
-if (-not $mimo) {
-  if (-not (Test-Path -LiteralPath $AppPath)) {
-    Write-Log "App not found: $AppPath"
+if (-not $running) {
+  if (-not $resolvedApp -or -not (Test-Path -LiteralPath $resolvedApp)) {
+    Write-Log "App not found. Set appPath in scripts/launcher.config.json (see launcher.config.example.json). Tried profile exeHints for $profilePath"
     exit 1
   }
-  Write-Log "launching $AppPath --remote-debugging-port=$Port"
-  Start-Process -FilePath $AppPath -ArgumentList ("--remote-debugging-port=" + $Port)
+  Write-Log "launching $resolvedApp --remote-debugging-port=$Port"
+  Start-Process -FilePath $resolvedApp -ArgumentList ("--remote-debugging-port=" + $Port)
   if (-not (Wait-CdpPort $Port -TimeoutSec 60)) {
     Write-Log "Timed out waiting for CDP port $Port"
     exit 1
@@ -105,12 +123,17 @@ if ($Restore) {
   exit $r.Code
 }
 
-$profilePath = if ([System.IO.Path]::IsPathRooted($Profile)) { $Profile } else { Join-Path $root $Profile }
-$applyArgs = @('apply', '--profile', $profilePath, '--port', "$Port", '--lang', $Lang)
-if (Test-Path -LiteralPath $Image) {
-  $applyArgs += @('--image', $Image)
+if (-not (Test-Path -LiteralPath $profilePath)) {
+  Write-Log "profile not found: $profilePath"
+  exit 1
+}
+
+$applyArgs = @('apply', '--profile', $profilePath, '--port', "$Port")
+if ($Lang) { $applyArgs += @('--lang', $Lang) }
+if ($imagePath -and (Test-Path -LiteralPath $imagePath)) {
+  $applyArgs += @('--image', $imagePath)
 } else {
-  Write-Log "Image not found: $Image"
+  Write-Log "No image configured/found (image=$imagePath); use the floating panel to pick one."
 }
 
 Write-Log ('apply: ' + ($applyArgs -join ' '))

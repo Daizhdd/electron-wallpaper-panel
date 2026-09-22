@@ -1,0 +1,9 @@
+{
+  "appPath": "",
+  "processName": "Xiaomi MiMo",
+  "shortcutNames": ["Xiaomi MiMo"],
+  "port": 9346,
+  "profile": "profiles/mimo-desktop.json",
+  "image": "",
+  "lang": "zh-CN"
+}

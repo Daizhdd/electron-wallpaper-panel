@@ -34,7 +34,7 @@
    node bin/ewp.js restore
    ```
 
-可选：`npm link` 后可直接用 `ewp`；PowerShell 一键启动见 [`scripts/launch-with-port.ps1`](scripts/README.md)。
+可选：`npm link` 后可直接用 `ewp`；一键启动脚本见 [`scripts/README.md`](scripts/README.md)。
 
 ### 可选：双击快捷方式自动带肤启动（Windows）
 

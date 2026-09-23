@@ -83,7 +83,7 @@ node bin/ewp.js apply --profile profiles/mimo-desktop.json --image ./wallpaper.j
 node bin/ewp.js restore --profile profiles/mimo-desktop.json
 ```
 
-Or use the helper: [`scripts/launch-with-port.ps1`](scripts/README.md).
+Or use a launcher helper: [`scripts/README.md`](scripts/README.md).
 
 ### Optional: double-click shortcut that launches skinned (Windows)
 

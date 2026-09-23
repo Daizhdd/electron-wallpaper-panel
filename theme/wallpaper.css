@@ -1,0 +1,13 @@
+/* Shared wallpaper + veil. Profiles inject this first. */
+
+html[data-ewp-skin],
+html[data-ewp-skin] body {
+  background-color: var(--ewp-fallback, #14181f) !important;
+  background-image:
+    linear-gradient(var(--ewp-scrim, rgba(0, 0, 0, 0)), var(--ewp-scrim, rgba(0, 0, 0, 0))),
+    var(--ewp-wallpaper, none) !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  background-size: cover !important;
+  background-attachment: fixed !important;
+}
